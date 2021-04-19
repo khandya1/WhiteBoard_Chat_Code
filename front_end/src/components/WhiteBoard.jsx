@@ -1,8 +1,5 @@
-import React, { Component, Fragment } from "react";
+import React, { Component, Fragment,useRef } from "react";
 import {
-  InputLabel,
-  MenuItem,
-  Select,
   AppBar,
   Toolbar,
   Typography,
@@ -14,8 +11,9 @@ import UndoIcon from "@material-ui/icons/Undo";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ReactResizeDetector from "react-resize-detector";
 
-class WhiteBoard extends Component {
-  render() {
+const WhiteBoard =(props) => {
+  const saveableCanvas = useRef(CanvasDraw);
+
     return (
       <Fragment>
         <AppBar position="static" style={{ backgroundColor: "#393b44" }}>
@@ -26,6 +24,36 @@ class WhiteBoard extends Component {
             >
               White Board
             </Typography>
+            <Button
+              variant="contained"
+              onClick={()=>{saveableCanvas.current.clear();}}
+              startIcon={<DeleteIcon />}
+              style={{
+                fontFamily: "poppins",
+                marginLeft: "auto",
+                fontWeight: "600",
+                color: "white",
+                backgroundColor: "#99A3CD",
+              }}
+            >
+              Clear
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<UndoIcon />}
+              style={{
+                fontFamily: "poppins",
+                marginLeft: "auto",
+                fontWeight: "600",
+                color: "white",
+                backgroundColor: "#99A3CD",
+              }}
+              onClick={() => {
+                saveableCanvas.current.undo();
+              }}
+            >
+              Undo
+            </Button>
             <Button
               variant="contained"
               startIcon={<ShareIcon />}
@@ -41,10 +69,13 @@ class WhiteBoard extends Component {
             </Button>
           </Toolbar>
         </AppBar>
-        <CanvasDraw canvasWidth={690} canvasHeight={548} />
+        <CanvasDraw 
+        ref={saveableCanvas}
+        canvasWidth={"auto"} 
+        canvasHeight={548}
+        hideGrid />
       </Fragment>
     );
-  }
-}
+ }
 
 export default WhiteBoard;
