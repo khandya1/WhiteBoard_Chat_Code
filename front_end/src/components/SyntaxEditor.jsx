@@ -5,7 +5,6 @@ import "ace-builds/src-min-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/mode-jsx";
 import {
   AppBar,
-  Button,
   createMuiTheme,
   FormControl,
   InputLabel,
@@ -15,8 +14,14 @@ import {
   ThemeProvider,
   Toolbar,
   Typography,
+  FormControlLabel,
+  Switch,
+  withStyles,
+  Button,
 } from "@material-ui/core";
 import localClasses from "./SyntaxEditor.module.css"
+import { pink } from "@material-ui/core/colors";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 const languages = [
   "java",
@@ -108,6 +113,20 @@ const useStyles = makeStyles((mutheme) => ({
     marginTop: mutheme.spacing(2),
   },
 }));
+const PurpleSwitch = withStyles({
+    switchBase: {
+      color: pink[300],
+      '&$checked': {
+        color: pink[400],
+      },
+      '&$checked + $track': {
+        backgroundColor: pink[400],
+      },
+    },
+    checked: {},
+    track: {},
+  })(Switch);
+  
 
 
 
@@ -118,6 +137,7 @@ const SyntaxEditor = (props) => {
   const [mode, setMode] = useState("c_cpp");
   const [theme, setTheme] = useState("tomorrow_night");
   const [fontSize, setFontSize] = useState(16);
+  const [autoCompletion, setautoCompletion] = useState(true);
 
   const classes = useStyles();
 
@@ -134,10 +154,11 @@ const SyntaxEditor = (props) => {
               variant="h5"
               style={{ fontFamily: "poppins", color: "#f1f3f8", margin: "auto" }}
             >
-              SyntaxEditor
+              Code Editor
           </Typography>
             <div className={localClasses.Editor__options}>
-              <FormControl size="small" variant="outlined" className={classes.formControl}>
+                <Toolbar>
+                <FormControl size="small" variant="outlined" className={classes.formControl}>
                 <InputLabel id="mode-label" style={{ fontFamily: "poppins", color: "#ffffff" }}>Language</InputLabel>
                 <Select
                   name="mode"
@@ -146,7 +167,6 @@ const SyntaxEditor = (props) => {
                   value={mode}
                   onChange={(e) => setMode(e.target.value)}
                   label="Language"
-
                 >
                   {languages.map((lang) => (
                     <MenuItem value={lang} key={lang}>
@@ -155,7 +175,7 @@ const SyntaxEditor = (props) => {
                   ))}
                 </Select>
               </FormControl >
-              <FormControl size="small" variant="outlined" className={classes.formControl}>
+                <FormControl size="small" variant="outlined" className={classes.formControl}>
                 <InputLabel
                   id="theme-label"
                   style={{ fontFamily: "poppins", color: "#ffffff" }}
@@ -177,8 +197,7 @@ const SyntaxEditor = (props) => {
                   ))}
                 </Select>
               </FormControl>
-
-              <FormControl size="small" variant="outlined" className={classes.formControl}>
+                <FormControl size="small" variant="outlined" className={classes.formControl}>
                 <InputLabel
                   id="font-label"
                   style={{ fontFamily: "poppins", color: "#ffffff" }}
@@ -200,7 +219,9 @@ const SyntaxEditor = (props) => {
                   ))}
                 </Select>
               </FormControl>
+                </Toolbar>
             </div>
+            
           </div>
         </AppBar>
 
@@ -217,7 +238,7 @@ const SyntaxEditor = (props) => {
           highlightActiveLine
           setOptions={{
             useWorker: false,
-            enableLiveAutocompletion: true,
+            enableLiveAutocompletion: autoCompletion,
           }}
         />
       </ThemeProvider>

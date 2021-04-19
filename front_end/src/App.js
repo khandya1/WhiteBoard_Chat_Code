@@ -3,7 +3,9 @@ import Editor from "./components/Editor";
 import Navbar from "./components/Navbar";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import ThinkPad from "./components/ThinkPad";
+import WhiteBoard from "./components/WhiteBoard";
+import SyntaxEditor from './components/SyntaxEditor';
+import "fontsource-poppins";
 
 var Sketchpad = require("responsive-sketchpad");
 
@@ -21,10 +23,10 @@ class App extends Component {
         >
           <Grid container spacing={5}>
             <Grid item xs={12} sm={12} md={6}>
-              <Editor />
+              <SyntaxEditor />
             </Grid>
             <Grid item xs={12} sm={12} md={6}>
-              <ThinkPad />
+              <WhiteBoard />
             </Grid>
           </Grid>
         </div>
