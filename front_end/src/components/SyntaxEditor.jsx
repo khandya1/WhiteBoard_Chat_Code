@@ -26,6 +26,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import io from "socket.io-client";
 
 const socket = io.connect("http://localhost:4000");
+socket.emit("create", "");
 
 const languages = [
   "java",
@@ -70,46 +71,8 @@ languages.forEach((lang) => {
 themes.forEach((theme) => require(`ace-builds/src-noconflict/theme-${theme}`));
 
 //default value to be displayed on code editor
-const defaultValue = `#include <bits/stdc++.h>
-#define lli long long int
-#define endl "\\n"
-#define MAX 1000005
-#define MOD 1000000007
-using namespace std;
-int main()
-{
-	int t;
-	cin>>t;
-	
-	while(t--)
-	{
-	    //your code
-	  
-	}
-	return 0;
-}`;
+const defaultValue = "Write your code here";
 
-const CssInputLabel = withStyles({
-  root: {
-    "& label.Mui-focused": {
-      color: "green",
-    },
-    "& .MuiInput-underline:after": {
-      borderBottomColor: "green",
-    },
-    "& .MuiOutlinedInput-root": {
-      "& fieldset": {
-        borderColor: "red",
-      },
-      "&:hover fieldset": {
-        borderColor: "yellow",
-      },
-      "&.Mui-focused fieldset": {
-        borderColor: "green",
-      },
-    },
-  },
-})(InputLabel);
 const useStyles = makeStyles((mutheme) => ({
   formControl: {
     margin: mutheme.spacing(1),
@@ -128,6 +91,11 @@ const SyntaxEditor = (props) => {
   const [autoCompletion, setautoCompletion] = useState(true);
 
   const classes = useStyles();
+
+  useEffect(() => {
+    // adding event listeners on mount here
+    socket.emit("joinroom", props.roomId);
+  }, []);
 
   useEffect(() => {
     socket.on("message", (value) => {
@@ -164,12 +132,12 @@ const SyntaxEditor = (props) => {
                 variant="outlined"
                 className={classes.formControl}
               >
-                <CssInputLabel
+                <InputLabel
                   id="mode-label"
                   style={{ fontFamily: "poppins", color: "#FFD500" }}
                 >
                   Language
-                </CssInputLabel>
+                </InputLabel>
                 <Select
                   name="mode"
                   labelId="mode-label"
