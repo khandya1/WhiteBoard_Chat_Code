@@ -10,22 +10,26 @@ import CanvasDraw from "react-canvas-draw";
 import UndoIcon from "@material-ui/icons/Undo";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ReactResizeDetector from "react-resize-detector";
+import localClasses from "./WhiteBoard.module.css"
 
 const WhiteBoard =(props) => {
   const saveableCanvas = useRef(CanvasDraw);
 
     return (
       <Fragment>
-        <AppBar position="static" style={{ backgroundColor: "#393b44" }}>
+        <AppBar position="static" style={{ backgroundColor: "#000A29" }}>
+        <div className={localClasses.Editor__navbar}>
           <Toolbar>
             <Typography
               variant="h5"
-              style={{ fontFamily: "poppins", color: "white" }}
+              style={{ fontFamily: "poppins", color: "white" , marginRight: "auto", marginTop: "auto", marginBottom: "auto", marginLeft: "30px", fontWeight: "800" }}
             >
-              White Board
-            </Typography>
+              &nbsp;White<span style={{ "color": "#FFD500"}}>Board</span>
+          </Typography>
+          <Toolbar ></Toolbar>
             <Button
               variant="contained"
+              color ="primary"
               onClick={()=>{saveableCanvas.current.clear();}}
               startIcon={<DeleteIcon />}
               style={{
@@ -33,7 +37,7 @@ const WhiteBoard =(props) => {
                 marginLeft: "auto",
                 fontWeight: "600",
                 color: "white",
-                backgroundColor: "#99A3CD",
+                
               }}
             >
               Clear
@@ -68,6 +72,7 @@ const WhiteBoard =(props) => {
               Share
             </Button>
           </Toolbar>
+          </div>
         </AppBar>
         <CanvasDraw 
         ref={saveableCanvas}

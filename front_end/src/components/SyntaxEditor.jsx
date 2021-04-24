@@ -1,6 +1,7 @@
 import React, { Fragment, useState , useEffect } from "react";
 import AceEditor from "react-ace";
 import "ace-builds/src-min-noconflict/ext-searchbox";
+import useTheme from "@material-ui/core/styles"
 import "ace-builds/src-min-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/mode-jsx";
 import {
@@ -88,25 +89,27 @@ int main()
 	return 0;
 }`;
 
-const mutheme = createMuiTheme({
-  overrides: {
-
-    MuiMenuItem: {
-      root: {
-        background: "#393B44",
-        "&$selected": {
-          backgroundColor: "#99A3CD",
-        },
-        "&:hover": {
-          backgroundColor: "#99A3CD",
-        }
+const CssInputLabel = withStyles({
+  root: {
+    '& label.Mui-focused': {
+      color: 'green',
+    },
+    '& .MuiInput-underline:after': {
+      borderBottomColor: 'green',
+    },
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: 'red',
+      },
+      '&:hover fieldset': {
+        borderColor: 'yellow',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: 'green',
       },
     },
   },
-});
-
-
-
+})(InputLabel);
 const useStyles = makeStyles((mutheme) => ({
   formControl: {
     margin: mutheme.spacing(1),
@@ -116,19 +119,7 @@ const useStyles = makeStyles((mutheme) => ({
     marginTop: mutheme.spacing(2),
   },
 }));
-const PurpleSwitch = withStyles({
-    switchBase: {
-      color: pink[300],
-      '&$checked': {
-        color: pink[400],
-      },
-      '&$checked + $track': {
-        backgroundColor: pink[400],
-      },
-    },
-    checked: {},
-    track: {},
-  })(Switch);
+
   
 
 
@@ -138,7 +129,7 @@ const SyntaxEditor = (props) => {
 
   const [value, setValue] = useState(defaultValue);
   const [mode, setMode] = useState("c_cpp");
-  const [theme, setTheme] = useState("tomorrow_night");
+  const [theme, setTheme] = useState("monokai");
   const [fontSize, setFontSize] = useState(16);
   const [autoCompletion, setautoCompletion] = useState(true);
 
@@ -160,18 +151,19 @@ const SyntaxEditor = (props) => {
   return (
     <Fragment>
       <ThemeProvider theme={mutheme}>
-        <AppBar position="static" style={{ backgroundColor: "#393b44" }}>
+        <AppBar position="static" style={{ backgroundColor: "#000A29" }}>
           <div className={localClasses.Editor__navbar}>
             <Typography
               variant="h5"
-              style={{ fontFamily: "poppins", color: "#f1f3f8", margin: "auto" }}
+              style={{ fontFamily: "poppins", color: "#f1f3f8", marginRight: "auto", marginTop: "auto", marginBottom: "auto", marginLeft: "30px", fontWeight: "800"  }}
             >
-              Code Editor
+              
+              &nbsp;Code<span style={{ "color": "#FFD500"}}>Editor</span>
           </Typography>
             <div className={localClasses.Editor__options}>
                 <Toolbar>
                 <FormControl size="small" variant="outlined" className={classes.formControl}>
-                <InputLabel id="mode-label" style={{ fontFamily: "poppins", color: "#ffffff" }}>Language</InputLabel>
+                <CssInputLabel id="mode-label" style={{ fontFamily: "poppins", color: "#FFD500" }}>Language</CssInputLabel>
                 <Select
                   name="mode"
                   labelId="mode-label"
@@ -179,6 +171,7 @@ const SyntaxEditor = (props) => {
                   value={mode}
                   onChange={(e) => setMode(e.target.value)}
                   label="Language"
+                  style={{ fontFamily: "poppins", color: "#ffffff" }}
                 >
                   {languages.map((lang) => (
                     <MenuItem value={lang} key={lang}>
