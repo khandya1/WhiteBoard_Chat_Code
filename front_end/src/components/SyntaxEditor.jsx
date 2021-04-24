@@ -1,7 +1,7 @@
-import React, { Fragment, useState , useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import AceEditor from "react-ace";
 import "ace-builds/src-min-noconflict/ext-searchbox";
-import useTheme from "@material-ui/core/styles"
+import useTheme from "@material-ui/core/styles";
 import "ace-builds/src-min-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/mode-jsx";
 import {
@@ -20,12 +20,12 @@ import {
   withStyles,
   Button,
 } from "@material-ui/core";
-import localClasses from "./SyntaxEditor.module.css"
+import localClasses from "./SyntaxEditor.module.css";
 import { pink } from "@material-ui/core/colors";
 import DeleteIcon from "@material-ui/icons/Delete";
-import io from 'socket.io-client';
+import io from "socket.io-client";
 
-const socket = io.connect('http://localhost:4000');
+const socket = io.connect("http://localhost:4000");
 
 const languages = [
   "java",
@@ -91,21 +91,21 @@ int main()
 
 const CssInputLabel = withStyles({
   root: {
-    '& label.Mui-focused': {
-      color: 'green',
+    "& label.Mui-focused": {
+      color: "green",
     },
-    '& .MuiInput-underline:after': {
-      borderBottomColor: 'green',
+    "& .MuiInput-underline:after": {
+      borderBottomColor: "green",
     },
-    '& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: 'red',
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
+        borderColor: "red",
       },
-      '&:hover fieldset': {
-        borderColor: 'yellow',
+      "&:hover fieldset": {
+        borderColor: "yellow",
       },
-      '&.Mui-focused fieldset': {
-        borderColor: 'green',
+      "&.Mui-focused fieldset": {
+        borderColor: "green",
       },
     },
   },
@@ -120,13 +120,7 @@ const useStyles = makeStyles((mutheme) => ({
   },
 }));
 
-  
-
-
-
 const SyntaxEditor = (props) => {
-
-
   const [value, setValue] = useState(defaultValue);
   const [mode, setMode] = useState("c_cpp");
   const [theme, setTheme] = useState("monokai");
@@ -135,35 +129,47 @@ const SyntaxEditor = (props) => {
 
   const classes = useStyles();
 
-
   useEffect(() => {
-    socket.on('message', value => {
-      setValue(value)
-    })
-  })
-
-
+    socket.on("message", (value) => {
+      setValue(value);
+    });
+  });
 
   const handleChange = (newValue) => {
-    socket.emit('message', newValue);
+    socket.emit("message", newValue);
   };
 
   return (
     <Fragment>
-      <ThemeProvider theme={mutheme}>
-        <AppBar position="static" style={{ backgroundColor: "#000A29" }}>
-          <div className={localClasses.Editor__navbar}>
-            <Typography
-              variant="h5"
-              style={{ fontFamily: "poppins", color: "#f1f3f8", marginRight: "auto", marginTop: "auto", marginBottom: "auto", marginLeft: "30px", fontWeight: "800"  }}
-            >
-              
-              &nbsp;Code<span style={{ "color": "#FFD500"}}>Editor</span>
+      <AppBar position="static" style={{ backgroundColor: "#000A29" }}>
+        <div className={localClasses.Editor__navbar}>
+          <Typography
+            variant="h5"
+            style={{
+              fontFamily: "poppins",
+              color: "#f1f3f8",
+              marginRight: "auto",
+              marginTop: "auto",
+              marginBottom: "auto",
+              marginLeft: "30px",
+              fontWeight: "800",
+            }}
+          >
+            &nbsp;Code<span style={{ color: "#FFD500" }}>Editor</span>
           </Typography>
-            <div className={localClasses.Editor__options}>
-                <Toolbar>
-                <FormControl size="small" variant="outlined" className={classes.formControl}>
-                <CssInputLabel id="mode-label" style={{ fontFamily: "poppins", color: "#FFD500" }}>Language</CssInputLabel>
+          <div className={localClasses.Editor__options}>
+            <Toolbar>
+              <FormControl
+                size="small"
+                variant="outlined"
+                className={classes.formControl}
+              >
+                <CssInputLabel
+                  id="mode-label"
+                  style={{ fontFamily: "poppins", color: "#FFD500" }}
+                >
+                  Language
+                </CssInputLabel>
                 <Select
                   name="mode"
                   labelId="mode-label"
@@ -175,18 +181,25 @@ const SyntaxEditor = (props) => {
                 >
                   {languages.map((lang) => (
                     <MenuItem value={lang} key={lang}>
-                      <span className={localClasses.Menu__options} > {lang.toUpperCase()} </span>
+                      <span className={localClasses.Menu__options}>
+                        {" "}
+                        {lang.toUpperCase()}{" "}
+                      </span>
                     </MenuItem>
                   ))}
                 </Select>
-              </FormControl >
-                <FormControl size="small" variant="outlined" className={classes.formControl}>
+              </FormControl>
+              <FormControl
+                size="small"
+                variant="outlined"
+                className={classes.formControl}
+              >
                 <InputLabel
                   id="theme-label"
                   style={{ fontFamily: "poppins", color: "#ffffff" }}
                 >
                   Theme
-              </InputLabel>
+                </InputLabel>
                 <Select
                   name="Theme"
                   labelId="theme-label"
@@ -196,19 +209,26 @@ const SyntaxEditor = (props) => {
                   label="Theme"
                 >
                   {themes.map((lang) => (
-                    <MenuItem key={lang} value={lang} >
-                      <span className={localClasses.Menu__options} > {lang} </span>
+                    <MenuItem key={lang} value={lang}>
+                      <span className={localClasses.Menu__options}>
+                        {" "}
+                        {lang}{" "}
+                      </span>
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
-                <FormControl size="small" variant="outlined" className={classes.formControl}>
+              <FormControl
+                size="small"
+                variant="outlined"
+                className={classes.formControl}
+              >
                 <InputLabel
                   id="font-label"
                   style={{ fontFamily: "poppins", color: "#ffffff" }}
                 >
                   Font Size
-              </InputLabel>
+                </InputLabel>
                 <Select
                   name="Theme"
                   labelId="font-label"
@@ -219,36 +239,36 @@ const SyntaxEditor = (props) => {
                 >
                   {[14, 16, 18, 20, 24, 28, 32, 40].map((size) => (
                     <MenuItem key={size} value={size}>
-                      <span className={localClasses.Menu__options} > {size} </span>
+                      <span className={localClasses.Menu__options}>
+                        {" "}
+                        {size}{" "}
+                      </span>
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
-                </Toolbar>
-            </div>
-            
+            </Toolbar>
           </div>
-        </AppBar>
+        </div>
+      </AppBar>
 
-        <AceEditor
-          mode={mode}
-          theme={theme}
-          height="550px"
-          width={"auto"}
-          onChange={handleChange}
-          value={value}
-          fontSize={fontSize}
-          showPrintMargin
-          showGutter
-          highlightActiveLine
-          setOptions={{
-            useWorker: false,
-            enableLiveAutocompletion: autoCompletion,
-          }}
-        />
-      </ThemeProvider>
-    </Fragment >
-
+      <AceEditor
+        mode={mode}
+        theme={theme}
+        height="550px"
+        width={"auto"}
+        onChange={handleChange}
+        value={value}
+        fontSize={fontSize}
+        showPrintMargin
+        showGutter
+        highlightActiveLine
+        setOptions={{
+          useWorker: false,
+          enableLiveAutocompletion: autoCompletion,
+        }}
+      />
+    </Fragment>
   );
 };
 
