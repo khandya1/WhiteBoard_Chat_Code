@@ -13,6 +13,10 @@ io.on("connection", (socket) => {
   socket.on("message", (message) => {
     socket.to(roomId).emit("message", message);
   });
+
+  socket.on("chatmessage", (message) => {
+    socket.to(roomId).emit("chatmessage", message);
+  });
 });
 
 http.listen(4000, function () {

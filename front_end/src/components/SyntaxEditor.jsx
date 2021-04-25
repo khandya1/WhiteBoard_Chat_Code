@@ -19,8 +19,15 @@ import {
 } from "@material-ui/core";
 import localClasses from "./SyntaxEditor.module.css";
 import DeleteIcon from "@material-ui/icons/Delete";
-import {languages, defaultValue, langMode, LangOptions, revLangMode, langId, themes} from "./LanguageData"
-import io from "socket.io-client";
+import {
+  languages,
+  defaultValue,
+  langMode,
+  LangOptions,
+  revLangMode,
+  langId,
+  themes,
+} from "./LanguageData";
 
 //extracting all the languages recquired
 languages.forEach((lang) => {
@@ -31,7 +38,6 @@ languages.forEach((lang) => {
 //extracting themes
 themes.forEach((theme) => require(`ace-builds/src-noconflict/theme-${theme}`));
 
-const socket = io.connect("http://localhost:4000");
 const axios = require("axios");
 const useStyles = makeStyles((mutheme) => ({
   formControl: {
@@ -44,9 +50,8 @@ const useStyles = makeStyles((mutheme) => ({
 }));
 
 const SyntaxEditor = (props) => {
-  
   const [value, setValue] = useState(defaultValue);
-  const [currLang, setCurrLang] = useState("C++")
+  const [currLang, setCurrLang] = useState("C++");
   const [mode, setMode] = useState("C++");
   const [theme, setTheme] = useState("monokai");
   const [fontSize, setFontSize] = useState(16);
@@ -56,22 +61,16 @@ const SyntaxEditor = (props) => {
   const classes = useStyles();
 
   useEffect(() => {
-    // this will send room ID at backend
-    socket.emit("joinroom", props.roomId);
-  }, []);
+    setMode(langMode[currLang]);
+  }, [currLang]);
 
-  useEffect(() => {
-    setMode(langMode[currLang])
-  }, [currLang])
-
-  socket.on("message", (newValue) => {
+  props.socket.on("message", (newValue) => {
     setValue(newValue);
   });
- 
 
   const handleChange = (newValue) => {
-    codeToRun=newValue;
-    socket.emit("message", newValue);
+    codeToRun = newValue;
+    props.socket.emit("message", newValue);
   };
 
   const handleCodeRun = async () => {
@@ -80,7 +79,7 @@ const SyntaxEditor = (props) => {
       url: "https://judge0.p.rapidapi.com/submissions",
       headers: {
         "content-type": "application/json",
-        "x-rapidapi-key": "05fd35b827mshfecd08e79e94514p11d0eejsn781d4a5696da",
+        "x-rapidapi-key": "19d0efcb30msha1114de32fcfce0p13d849jsnab6f1292bb33",
         "x-rapidapi-host": "judge0.p.rapidapi.com",
       },
       data: {
@@ -89,7 +88,7 @@ const SyntaxEditor = (props) => {
         stdin: "10",
       },
     };
-    console.log(options)
+    console.log(options);
     await axios
       .request(options)
       .then(function (response) {
@@ -100,8 +99,6 @@ const SyntaxEditor = (props) => {
         console.error(error);
       });
 
-
-
     const delay = (ms) => new Promise((res) => setTimeout(res, ms));
     await delay(7000);
     console.log("Waited 7s");
@@ -110,7 +107,7 @@ const SyntaxEditor = (props) => {
       method: "GET",
       url: "https://judge0.p.rapidapi.com/submissions/" + codeToken,
       headers: {
-        "x-rapidapi-key": "05fd35b827mshfecd08e79e94514p11d0eejsn781d4a5696da",
+        "x-rapidapi-key": "19d0efcb30msha1114de32fcfce0p13d849jsnab6f1292bb33",
         "x-rapidapi-host": "judge0.p.rapidapi.com",
       },
     };
@@ -124,8 +121,6 @@ const SyntaxEditor = (props) => {
         console.error(error);
       });
   };
-   
- 
 
   return (
     <Fragment>
@@ -146,10 +141,9 @@ const SyntaxEditor = (props) => {
             &nbsp;Code<span style={{ color: "#FFD500" }}>Editor</span>
           </Typography>
 
-          
           {console.log(props.roomId)}
           <Toolbar>
-          <FormControl
+            <FormControl
               size="small"
               variant="outlined"
               className={classes.formControl}
@@ -166,7 +160,7 @@ const SyntaxEditor = (props) => {
                 id="select-mode"
                 value={langMode[currLang]}
                 onChange={(e) => {
-                  setCurrLang(revLangMode[ e.target.value]);
+                  setCurrLang(revLangMode[e.target.value]);
                 }}
                 label="Language"
                 style={{ fontFamily: "poppins", color: "#ffffff" }}
@@ -234,9 +228,8 @@ const SyntaxEditor = (props) => {
                 ))}
               </Select>
             </FormControl>
-              
           </Toolbar>
-    </div>
+        </div>
       </AppBar>
       <AceEditor
         mode={mode}
@@ -276,7 +269,6 @@ const SyntaxEditor = (props) => {
           <Button
             variant="contained"
             color="primary"
-
             startIcon={<DeleteIcon />}
             style={{
               fontFamily: "poppins",
