@@ -6,60 +6,21 @@ import "ace-builds/src-min-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/mode-jsx";
 import {
   AppBar,
-  createMuiTheme,
   FormControl,
   InputLabel,
   makeStyles,
   MenuItem,
   Select,
-  ThemeProvider,
   Toolbar,
   Typography,
   FormControlLabel,
   Switch,
-  withStyles,
   Button,
 } from "@material-ui/core";
 import localClasses from "./SyntaxEditor.module.css";
-import { pink } from "@material-ui/core/colors";
 import DeleteIcon from "@material-ui/icons/Delete";
+import {languages, defaultValue, langMode, LangOptions, revLangMode, langId, themes} from "./LanguageData"
 import io from "socket.io-client";
-
-const socket = io.connect("http://localhost:4000");
-socket.emit("create", "");
-
-const languages = [
-  "java",
-  "python",
-  "c_cpp",
-  "javascript",
-  "html",
-  "ruby",
-  "typescript",
-  "kotlin",
-  "swift",
-  "markdown",
-  "mysql",
-  "json",
-  "golang",
-  "csharp",
-  "sql",
-  "sqlserver",
-];
-
-const themes = [
-  "monokai",
-  "github",
-  "tomorrow_night",
-  "tomorrow",
-  "kuroir",
-  "twilight",
-  "xcode",
-  "textmate",
-  "solarized_dark",
-  "solarized_light",
-  "terminal",
-];
 
 //extracting all the languages recquired
 languages.forEach((lang) => {
@@ -70,9 +31,8 @@ languages.forEach((lang) => {
 //extracting themes
 themes.forEach((theme) => require(`ace-builds/src-noconflict/theme-${theme}`));
 
-//default value to be displayed on code editor
-const defaultValue = "Write your code here";
-
+const socket = io.connect("http://localhost:4000");
+const axios = require("axios");
 const useStyles = makeStyles((mutheme) => ({
   formControl: {
     margin: mutheme.spacing(1),
@@ -84,28 +44,88 @@ const useStyles = makeStyles((mutheme) => ({
 }));
 
 const SyntaxEditor = (props) => {
+  
   const [value, setValue] = useState(defaultValue);
-  const [mode, setMode] = useState("c_cpp");
+  const [currLang, setCurrLang] = useState("C++")
+  const [mode, setMode] = useState("C++");
   const [theme, setTheme] = useState("monokai");
   const [fontSize, setFontSize] = useState(16);
   const [autoCompletion, setautoCompletion] = useState(true);
-
+  let codeToRun = 0;
+  var codeToken = 0;
   const classes = useStyles();
 
   useEffect(() => {
-    // adding event listeners on mount here
+    // this will send room ID at backend
     socket.emit("joinroom", props.roomId);
   }, []);
 
   useEffect(() => {
-    socket.on("message", (value) => {
-      setValue(value);
-    });
+    setMode(langMode[currLang])
+  }, [currLang])
+
+  socket.on("message", (newValue) => {
+    setValue(newValue);
   });
+ 
 
   const handleChange = (newValue) => {
+    codeToRun=newValue;
     socket.emit("message", newValue);
   };
+
+  const handleCodeRun = async () => {
+    let options = {
+      method: "POST",
+      url: "https://judge0.p.rapidapi.com/submissions",
+      headers: {
+        "content-type": "application/json",
+        "x-rapidapi-key": "05fd35b827mshfecd08e79e94514p11d0eejsn781d4a5696da",
+        "x-rapidapi-host": "judge0.p.rapidapi.com",
+      },
+      data: {
+        language_id: langId[currLang],
+        source_code: codeToRun,
+        stdin: "10",
+      },
+    };
+    console.log(options)
+    await axios
+      .request(options)
+      .then(function (response) {
+        codeToken = response.data.token;
+        console.log(codeToken);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+
+
+
+    const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+    await delay(7000);
+    console.log("Waited 7s");
+
+    options = {
+      method: "GET",
+      url: "https://judge0.p.rapidapi.com/submissions/" + codeToken,
+      headers: {
+        "x-rapidapi-key": "05fd35b827mshfecd08e79e94514p11d0eejsn781d4a5696da",
+        "x-rapidapi-host": "judge0.p.rapidapi.com",
+      },
+    };
+
+    await axios
+      .request(options)
+      .then(function (response) {
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  };
+   
+ 
 
   return (
     <Fragment>
@@ -125,101 +145,99 @@ const SyntaxEditor = (props) => {
           >
             &nbsp;Code<span style={{ color: "#FFD500" }}>Editor</span>
           </Typography>
-          <div className={localClasses.Editor__options}>
-            <Toolbar>
-              <FormControl
-                size="small"
-                variant="outlined"
-                className={classes.formControl}
-              >
-                <InputLabel
-                  id="mode-label"
-                  style={{ fontFamily: "poppins", color: "#FFD500" }}
-                >
-                  Language
-                </InputLabel>
-                <Select
-                  name="mode"
-                  labelId="mode-label"
-                  id="select-mode"
-                  value={mode}
-                  onChange={(e) => setMode(e.target.value)}
-                  label="Language"
-                  style={{ fontFamily: "poppins", color: "#ffffff" }}
-                >
-                  {languages.map((lang) => (
-                    <MenuItem value={lang} key={lang}>
-                      <span className={localClasses.Menu__options}>
-                        {" "}
-                        {lang.toUpperCase()}{" "}
-                      </span>
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl
-                size="small"
-                variant="outlined"
-                className={classes.formControl}
-              >
-                <InputLabel
-                  id="theme-label"
-                  style={{ fontFamily: "poppins", color: "#ffffff" }}
-                >
-                  Theme
-                </InputLabel>
-                <Select
-                  name="Theme"
-                  labelId="theme-label"
-                  id="select-theme"
-                  onChange={(e) => setTheme(e.target.value)}
-                  value={theme}
-                  label="Theme"
-                >
-                  {themes.map((lang) => (
-                    <MenuItem key={lang} value={lang}>
-                      <span className={localClasses.Menu__options}>
-                        {" "}
-                        {lang}{" "}
-                      </span>
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl
-                size="small"
-                variant="outlined"
-                className={classes.formControl}
-              >
-                <InputLabel
-                  id="font-label"
-                  style={{ fontFamily: "poppins", color: "#ffffff" }}
-                >
-                  Font Size
-                </InputLabel>
-                <Select
-                  name="Theme"
-                  labelId="font-label"
-                  id="select-font"
-                  onChange={(e) => setFontSize(e.target.value)}
-                  value={fontSize}
-                  label="Font Size"
-                >
-                  {[14, 16, 18, 20, 24, 28, 32, 40].map((size) => (
-                    <MenuItem key={size} value={size}>
-                      <span className={localClasses.Menu__options}>
-                        {" "}
-                        {size}{" "}
-                      </span>
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Toolbar>
-          </div>
-        </div>
-      </AppBar>
 
+          
+          {console.log(props.roomId)}
+          <Toolbar>
+          <FormControl
+              size="small"
+              variant="outlined"
+              className={classes.formControl}
+            >
+              <InputLabel
+                id="mode-label"
+                style={{ fontFamily: "poppins", color: "#FFD500" }}
+              >
+                Language
+              </InputLabel>
+              <Select
+                name="mode"
+                labelId="mode-label"
+                id="select-mode"
+                value={langMode[currLang]}
+                onChange={(e) => {
+                  setCurrLang(revLangMode[ e.target.value]);
+                }}
+                label="Language"
+                style={{ fontFamily: "poppins", color: "#ffffff" }}
+              >
+                {LangOptions.map((language) => (
+                  <MenuItem value={langMode[language]} key={language}>
+                    <span className={localClasses.Menu__options}>
+                      {language}
+                    </span>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl
+              size="small"
+              variant="outlined"
+              className={classes.formControl}
+            >
+              <InputLabel
+                id="theme-label"
+                style={{ fontFamily: "poppins", color: "#FFD500" }}
+              >
+                Theme
+              </InputLabel>
+              <Select
+                name="Theme"
+                labelId="theme-label"
+                id="select-theme"
+                onChange={(e) => setTheme(e.target.value)}
+                value={theme}
+                label="Theme"
+                style={{ fontFamily: "poppins", color: "#ffffff" }}
+              >
+                {themes.map((lang) => (
+                  <MenuItem key={lang} value={lang}>
+                    <span className={localClasses.Menu__options}> {lang} </span>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl
+              size="small"
+              variant="outlined"
+              className={classes.formControl}
+            >
+              <InputLabel
+                id="font-label"
+                style={{ fontFamily: "poppins", color: "#FFD500" }}
+              >
+                Font Size
+              </InputLabel>
+              <Select
+                name="Theme"
+                labelId="font-label"
+                id="select-font"
+                onChange={(e) => setFontSize(e.target.value)}
+                value={fontSize}
+                label="Font Size"
+                style={{ fontFamily: "poppins", color: "#ffffff" }}
+              >
+                {[14, 16, 18, 20, 24, 28, 32, 40].map((size) => (
+                  <MenuItem key={size} value={size}>
+                    <span className={localClasses.Menu__options}> {size} </span>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+              
+          </Toolbar>
+    </div>
+      </AppBar>
       <AceEditor
         mode={mode}
         theme={theme}
@@ -236,6 +254,56 @@ const SyntaxEditor = (props) => {
           enableLiveAutocompletion: autoCompletion,
         }}
       />
+      <AppBar position="static" style={{ backgroundColor: "#000A29" }}>
+        <Toolbar>
+          <FormControlLabel
+            control={
+              <Switch
+                color="primary"
+                checked={autoCompletion}
+                onChange={() => {
+                  setautoCompletion(!autoCompletion);
+                }}
+                name="EnableAutoCompletion"
+              />
+            }
+            label={
+              <Typography>
+                <span style={{ color: "white" }}>Enable Auto-complete</span>
+              </Typography>
+            }
+          />
+          <Button
+            variant="contained"
+            color="primary"
+
+            startIcon={<DeleteIcon />}
+            style={{
+              fontFamily: "poppins",
+              marginLeft: "auto",
+              fontWeight: "600",
+              color: "white",
+            }}
+          >
+            Compile
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleCodeRun}
+            startIcon={<DeleteIcon />}
+            style={{
+              fontFamily: "poppins",
+              marginLeft: "10px",
+              fontWeight: "600",
+              color: "#fff",
+              backgroundColor: "#FFD500",
+            }}
+          >
+            Run
+          </Button>
+        </Toolbar>
+      </AppBar>
     </Fragment>
   );
 };

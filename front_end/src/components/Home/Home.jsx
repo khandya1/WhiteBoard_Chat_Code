@@ -1,138 +1,237 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 import localclasses from "./Home.module.css";
-import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { TextField, Button as MUIButton } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import SkyLight from "react-skylight";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
 
-function makeId(length) {
-  var result = "";
+
+
+
+function generateRoomId() {
+  var tempId = "";
   var characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   var charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  for (var i = 0; i < 12; i++) {
+    tempId += characters.charAt(Math.floor(Math.random() * charactersLength));
+    if((i+1)%4 ===0 && i!==11)
+    tempId+="-";
   }
-  return result;
+  return tempId;
 }
 
-const Home = () => {
-  const [roomId, setroomId] = useState(makeId(15));
-  const [createRoomModal, setCreateRoomModal] = useState(false);
-  const [joinRoomModal, setJoinRoomModal] = useState(false);
+const styles = {
+  input: {
+    color: "white",
+  },
+};
 
-  const handleCreateModalShow = () => setCreateRoomModal(true);
-  const handleCreateModalClose = () => setCreateRoomModal(false);
+const Home = (props) => {
+  const { classes } = props;
+  const skyLightCreateModal = useRef(SkyLight);
+  const skyLightJoinModal = useRef(SkyLight);
+  const [roomId, setroomId] = useState(generateRoomId());
 
-  const handleJoinModalShow = () => setJoinRoomModal(true);
-  const handleJoinModalClose = () => setJoinRoomModal(false);
+
+  const roomModal = {
+        backgroundImage:
+        "linear-gradient(to left top, #000a29, #053155, #035982, #0085af, #00b4d8)",
+        width: "30%",
+        marginTop: "-200px",
+        marginLeft: "-15%",
+    };
+
+  const ModalTitle = (props) => (
+    <Row className="justify-content-md-center mt-5">
+      <span
+        style={{
+          fontFamily: "poppins",
+          fontWeight: "600",
+          color: "#fff",
+          fontSize: "4vh",
+        }}
+      >
+        {props.start}
+        <span style={{ color: "#fff" }}>&nbsp;Syntax</span>
+        <span style={{ color: "#ffd500" }}>Room</span>
+      </span>
+    </Row>
+  );
 
   return (
     <div className={localclasses.home}>
       <Container fluid>
         <Row>
-          <Col xs={12} md={8}></Col>
+          <Col xs={12} md={8}>
+            <img
+              className={localclasses.home__svg}
+              src={bgimg}
+              alt="SyntaxMeets"
+            />
+          </Col>
           <Col xs={12} md={3}>
             <Container className={localclasses.home__buttons}>
               <Row>
-                <Button
+                <MUIButton
                   block
                   style={{
                     backgroundColor: "#ffd500",
                     padding: "10px",
                     fontWeight: "400",
-                    color: "#000a29",
+                    color: "#000",
+                    fontSize: '3vh'
                   }}
-                  size="lg"
-                  onClick={handleCreateModalShow}
+                  size="large"
+                  fullWidth
+                  onClick={() => skyLightCreateModal.current.show()}
                 >
-                  Create a room
-                </Button>
+                  Create a Room
+                </MUIButton>
               </Row>
               <br />
+              <br />
               <Row>
-                <Button
+                <MUIButton
                   block
                   style={{
                     backgroundColor: "#ffd500",
                     padding: "10px",
                     fontWeight: "400",
-                    color: "#000a29",
+                    color: "#000",
+                    fontSize: '3vh'
                   }}
-                  size="lg"
-                  onClick={handleJoinModalShow}
+                  size="large"
+                  fullWidth
+                  onClick={() => skyLightJoinModal.current.show()}
                 >
                   Join a room
-                </Button>
+                </MUIButton>
               </Row>
-            </Container>
-            <Modal show={createRoomModal} onHide={handleCreateModalClose}>
-              <Modal.Header closeButton>
-                <Modal.Title>
-                  <span
-                    style={{
-                      fontFamily: "poppins",
-                      fontWeight: "900",
-                      color: "#000",
-                    }}
+
+
+                  <SkyLight
+                    dialogStyles={roomModal}
+                    hideOnOverlayClicked
+                    ref={skyLightCreateModal}
+                    title={<ModalTitle start="Create a new" />}
                   >
-                    Create a new <span style={{ color: "#ffd500" }}>Room</span>
-                  </span>
-                </Modal.Title>
-              </Modal.Header>
-              <Container className={localclasses.home__modal__container}>
-                <TextField
-                  fullWidth
-                  id="outlined-basic"
-                  label="Your Name"
-                  variant="outlined"
-                />
-              </Container>
-              <Modal.Footer>
-                <MUIButton
-                  variant="contained"
-                  color="primary"
-                  component={Link}
-                  to={roomId}
-                >
-                  Create Room
-                </MUIButton>
-              </Modal.Footer>
-            </Modal>
-            <Modal show={joinRoomModal} onHide={handleJoinModalClose}>
-              <Modal.Header closeButton>
-                <Modal.Title>Join Room</Modal.Title>
-              </Modal.Header>
-              <Container className={localclasses.home_modal_container}>
-                <TextField
-                  fullWidth
-                  id="outlined-basic"
-                  label="Enter Your Name"
-                  variant="outlined"
-                />
-                <TextField
-                  onChange={(event) => setroomId(event.target.value)}
-                  fullWidth
-                  id="outlined-basic"
-                  label="Enter Room ID"
-                  variant="outlined"
-                />
-              </Container>
-              <Modal.Footer>
-                <MUIButton component={Link} to={roomId}>
-                  Join Room
-                </MUIButton>
-              </Modal.Footer>
-            </Modal>
-          </Col>
+                    <Container className={localclasses.home__modal__container}>
+                      <Typography
+                        style={{
+                          color: "#fff",
+                          marginBottom: "15px",
+                          fontSize: "3vh",
+                        }}
+                      >
+                        Enter Your Name
+                      </Typography>
+                      <TextField
+                        className={classes.root}
+                        InputProps={{ className: classes.input }}
+                        fullWidth
+                        id="outlined-basic"
+                        label="Your Name"
+                        variant="outlined"
+                      />
+
+                      <br />
+                      <br />
+
+                      <Row>
+                        <MUIButton
+                          style={{
+                            marginLeft: "auto",
+                            marginRight: "auto",
+                            backgroundColor: "#ffd500",
+                          }}
+                          variant="contained"
+                          size="lg"
+                          component={Link}
+                          to={roomId}
+                        >
+                          Create Room
+                        </MUIButton>
+                        </Row>
+                    </Container>
+                  </SkyLight>
+                  <SkyLight
+                    dialogStyles={roomModal}
+                    hideOnOverlayClicked
+                    ref={skyLightJoinModal}
+                    title={<ModalTitle start="Join a" />}
+                  >
+                    <Container className={localclasses.home__modal__container}>
+                      <Typography
+                        style={{
+                          color: "#fff",
+                          marginBottom: "15px",
+                          fontSize: "3vh",
+                        }}
+                      >
+                        Enter Your Name
+                      </Typography>
+                      <TextField
+                        className={classes.root}
+                        InputProps={{ className: classes.input }}
+                        fullWidth
+                        id="outlined-basic"
+                        label="Your Name"
+                        variant="outlined"
+                      />
+
+                      <Typography
+                        style={{
+                          color: "#fff",
+                          marginBottom: "15px",
+                          fontSize: "3vh",
+                        }}
+                      >
+                        Enter Room Id
+                      </Typography>
+                      <TextField
+                        onChange={(event) => setroomId(event.target.value)}
+                        fullWidth
+                        id="outlined-basic"
+                        className={classes.root}
+                        InputProps={{ className: classes.input }}
+                        label="Enter Room ID"
+                        variant="outlined"
+                      />
+                      <br />
+                      <br />
+
+                      <Row>
+                        <MUIButton
+                          style={{
+                            marginLeft: "auto",
+                            marginRight: "auto",
+                            backgroundColor: "#ffd500",
+                          }}
+                          variant="contained"
+                          size="lg"
+                          component={Link}
+                          to={roomId}
+                        >
+                          Join a Room
+                        </MUIButton>
+                      </Row>
+                    </Container>
+                  </SkyLight>
+               </Container>
+               </Col>
           <Col xs={12} md={1}></Col>
         </Row>
       </Container>
     </div>
   );
 };
-
-export default Home;
+Home.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+export default withStyles(styles)(Home);
