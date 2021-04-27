@@ -2,7 +2,6 @@ import React, { Fragment, useState, useEffect } from "react";
 import Navbar from "../Navbar";
 import Grid from "@material-ui/core/Grid";
 import SyntaxEditor from "../SyntaxEditor";
-import SyntaxPad from "../WhiteBoard";
 import io from "socket.io-client";
 import WhiteBoard from "../WhiteBoard";
 

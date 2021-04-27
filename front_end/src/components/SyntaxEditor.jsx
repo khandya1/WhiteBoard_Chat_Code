@@ -38,7 +38,7 @@ languages.forEach((lang) => {
 //extracting themes
 themes.forEach((theme) => require(`ace-builds/src-noconflict/theme-${theme}`));
 
-const axios = require("axios");
+const axios = require("axios").default;
 const useStyles = makeStyles((mutheme) => ({
   formControl: {
     margin: mutheme.spacing(1),
@@ -74,13 +74,14 @@ const SyntaxEditor = (props) => {
   };
 
   const handleCodeRun = async () => {
-    let options = {
+    var options = {
       method: "POST",
-      url: "https://judge0.p.rapidapi.com/submissions",
+      url: "https://judge0-ce.p.rapidapi.com/submissions",
+      params: { base64_encoded: "true", fields: "*" },
       headers: {
         "content-type": "application/json",
         "x-rapidapi-key": "19d0efcb30msha1114de32fcfce0p13d849jsnab6f1292bb33",
-        "x-rapidapi-host": "judge0.p.rapidapi.com",
+        "x-rapidapi-host": "judge0-ce.p.rapidapi.com",
       },
       data: {
         language_id: langId[currLang],
@@ -103,12 +104,13 @@ const SyntaxEditor = (props) => {
     await delay(7000);
     console.log("Waited 7s");
 
-    options = {
+    var options = {
       method: "GET",
-      url: "https://judge0.p.rapidapi.com/submissions/" + codeToken,
+      url: "https://judge0-ce.p.rapidapi.com/submissions/" + codeToken,
+      params: { base64_encoded: "true", fields: "*" },
       headers: {
         "x-rapidapi-key": "19d0efcb30msha1114de32fcfce0p13d849jsnab6f1292bb33",
-        "x-rapidapi-host": "judge0.p.rapidapi.com",
+        "x-rapidapi-host": "judge0-ce.p.rapidapi.com",
       },
     };
 
