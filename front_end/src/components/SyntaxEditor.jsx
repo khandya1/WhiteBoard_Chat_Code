@@ -1,7 +1,6 @@
-import React, { Fragment, useState, useEffect , useRef } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import AceEditor from "react-ace";
 import "ace-builds/src-min-noconflict/ext-searchbox";
-import useTheme from "@material-ui/core/styles";
 import "ace-builds/src-min-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/mode-jsx";
 import {
@@ -18,22 +17,20 @@ import {
   Button,
   Dialog,
   DialogTitle,
+  DialogActions,
 } from "@material-ui/core";
 import localClasses from "./SyntaxEditor.module.css";
-import Grid from '@material-ui/core/Grid';
+import Grid from "@material-ui/core/Grid";
 import DeleteIcon from "@material-ui/icons/Delete";
 import {
   languages,
   defaultValue,
   langMode,
   LangOptions,
-  revLangMode,
   langId,
   themes,
 } from "./LanguageData";
 import ShareIcon from "@material-ui/icons/Share";
-
-
 
 //extracting all the languages recquired
 languages.forEach((lang) => {
@@ -56,23 +53,22 @@ const useStyles = makeStyles((mutheme) => ({
 }));
 
 const ICE = (props) => {
-
   const handleIChange = (newValue) => {
-    props.onInputChange(newValue)
-  }
-  
-    return (
-      <AceEditor
-        mode="c_cpp"
-        theme="monokai"
-        height="150px"
-        width={"auto"}
-        onChange={handleIChange}
-        value={props.inputValue}
-        fontSize={18}
-      />
-    )
-  }
+    props.onInputChange(newValue);
+  };
+
+  return (
+    <AceEditor
+      mode="c_cpp"
+      theme="monokai"
+      height="150px"
+      width={"auto"}
+      onChange={handleIChange}
+      value={props.inputValue}
+      fontSize={18}
+    />
+  );
+};
 
 const SyntaxEditor = (props) => {
   const [value, setValue] = useState(defaultValue);
@@ -81,9 +77,11 @@ const SyntaxEditor = (props) => {
   const [theme, setTheme] = useState("monokai");
   const [fontSize, setFontSize] = useState(16);
   const [autoCompletion, setautoCompletion] = useState(true);
-  const [codeInput, setCodeInput] = useState("")
-  const [codeOutput, setCodeOutput] = useState("")
-  const [isCompiling, setIsCompiling] = useState(false)
+  const [codeInput, setCodeInput] = useState("");
+  const [codeOutput, setCodeOutput] = useState("");
+  const [isCompiling, setIsCompiling] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [codeError, setCodeError] = useState("");
 
   var codeToken = 0;
   const classes = useStyles();
@@ -103,7 +101,7 @@ const SyntaxEditor = (props) => {
 
   const handleInputChange = (newInput) => {
     setCodeInput(newInput);
-  }
+  };
 
   const handleCodeRun = async () => {
     setIsCompiling(true);
@@ -126,6 +124,7 @@ const SyntaxEditor = (props) => {
     await axios
       .request(options)
       .then(function (response) {
+        console.log("compile: ", response);
         codeToken = response.data.token;
         console.log(codeToken);
       })
@@ -135,7 +134,6 @@ const SyntaxEditor = (props) => {
 
     const delay = (ms) => new Promise((res) => setTimeout(res, ms));
     await delay(7000);
-    console.log("Waited 7s");
 
     var options = {
       method: "GET",
@@ -150,40 +148,43 @@ const SyntaxEditor = (props) => {
     await axios
       .request(options)
       .then(function (response) {
-        console.log(response.data);
-        setCodeOutput(response.data.stdout);
-        setIsCompiling(false);
+        if (response.data.stderr !== null) {
+          setIsCompiling(false);
+          setCodeError(response.data.stderr);
+          setIsError(true);
+        } else {
+          setCodeOutput(response.data.stdout);
+          setIsCompiling(false);
+        }
       })
       .catch(function (error) {
-        console.error(error);
+        setIsCompiling(false);
+        setCodeError("Compilation Error: " + error.response.data.error);
+        setIsError(true);
       });
   };
-
 
   const IONavbar = (props) => {
     return (
       <AppBar position="static" style={{ backgroundColor: "#000A29" }}>
         <Typography
-            variant="h6"
-            style={{
-              fontFamily: "poppins",
-              color: "white",
-              marginRight: "auto",
-              marginTop: "auto",
-              marginBottom: "auto",
-              marginLeft: "auto",
-              fontWeight: "400",
-              padding: "3px 2px"
-            }}
-          >
-            {props.type}
-          </Typography>
+          variant="h6"
+          style={{
+            fontFamily: "poppins",
+            color: "white",
+            marginRight: "auto",
+            marginTop: "auto",
+            marginBottom: "auto",
+            marginLeft: "auto",
+            fontWeight: "400",
+            padding: "3px 2px",
+          }}
+        >
+          {props.type}
+        </Typography>
       </AppBar>
     );
-
   };
-
-
 
   return (
     <Fragment>
@@ -194,9 +195,23 @@ const SyntaxEditor = (props) => {
             <span>
               <ShareIcon style={{ fontSize: 125 }} />
             </span>
-            <span className={localClasses.arrow}>></span>
+            <span className={localClasses.arrow}></span>
           </div>
         </div>
+      </Dialog>
+      <Dialog maxWidth={"sm"} open={isError}>
+        <DialogTitle>Oops Error Occured</DialogTitle>
+        <span style={{ marginLeft: "15px" }}>{codeError}</span>
+        <DialogActions>
+          <Button
+            onClick={() => setIsError(false)}
+            variant="contained"
+            size="large"
+            color="primary"
+          >
+            Close
+          </Button>
+        </DialogActions>
       </Dialog>
       <AppBar position="static" style={{ backgroundColor: "#000A29" }}>
         <div className={localClasses.Editor__navbar}>
@@ -232,15 +247,15 @@ const SyntaxEditor = (props) => {
                 name="mode"
                 labelId="mode-label"
                 id="select-mode"
-                value={langMode[currLang]}
+                value={currLang}
                 onChange={(e) => {
-                  setCurrLang(revLangMode[e.target.value]);
+                  setCurrLang(e.target.value);
                 }}
                 label="Language"
                 style={{ fontFamily: "poppins", color: "#ffffff" }}
               >
                 {LangOptions.map((language) => (
-                  <MenuItem value={langMode[language]} key={language}>
+                  <MenuItem value={language} key={language}>
                     <span className={localClasses.Menu__options}>
                       {language}
                     </span>
@@ -306,13 +321,12 @@ const SyntaxEditor = (props) => {
         </div>
       </AppBar>
       <AceEditor
-        mode={mode}
+        mode={langMode[currLang]}
         theme={theme}
         height="550px"
-        width={"auto"}        
+        width={"auto"}
         value={value}
         onChange={handleChange}
-
         fontSize={fontSize}
         showPrintMargin
         showGutter
@@ -323,7 +337,10 @@ const SyntaxEditor = (props) => {
           enableLiveAutocompletion: autoCompletion,
         }}
       />
-      <AppBar position="static" style={{ backgroundColor: "#000A29",  marginBottom: "10px" }}>
+      <AppBar
+        position="static"
+        style={{ backgroundColor: "#000A29", marginBottom: "10px" }}
+      >
         <Toolbar>
           <FormControlLabel
             control={
@@ -374,11 +391,11 @@ const SyntaxEditor = (props) => {
       </AppBar>
       <Grid container spacing={0}>
         <Grid item xs={12} sm={12} md={6}>
-        <IONavbar type={"Input"} />
-          <ICE inputValue = {codeInput} onInputChange = {handleInputChange}/>
+          <IONavbar type={"Input"} />
+          <ICE inputValue={codeInput} onInputChange={handleInputChange} />
         </Grid>
         <Grid item xs={12} sm={12} md={6}>
-        <IONavbar type = {"Output"}/>
+          <IONavbar type={"Output"} />
           <AceEditor
             mode="c_cpp"
             theme="monokai"
@@ -397,8 +414,6 @@ const SyntaxEditor = (props) => {
           />
         </Grid>
       </Grid>
-
-
     </Fragment>
   );
 };

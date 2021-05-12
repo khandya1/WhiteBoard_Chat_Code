@@ -8,8 +8,8 @@ import { Link } from "react-router-dom";
 import SkyLight from "react-skylight";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
-import GroupAddIcon from '@material-ui/icons/GroupAdd';
+import MeetingRoomIcon from "@material-ui/icons/MeetingRoom";
+import GroupAddIcon from "@material-ui/icons/GroupAdd";
 
 function generateRoomId() {
   var tempId = "";
@@ -25,7 +25,7 @@ function generateRoomId() {
 
 const styles = {
   input: {
-    color: "white",
+    color: "#000",
   },
 };
 
@@ -51,13 +51,13 @@ const Home = (props) => {
         style={{
           fontFamily: "poppins",
           fontWeight: "600",
-          color: "#fff",
+          color: "#000",
           fontSize: "4vh",
         }}
       >
         {props.start}
-        <span style={{ color: "#fff" }}>&nbsp;Syntax</span>
-        <span style={{ color: "#ffd500" }}>Room</span>
+        <span style={{ color: "#000", fontWeight: "800" }}>&nbsp;Code</span>
+        <span style={{ color: "#ffd500", fontWeight: "800" }}>Room</span>
       </span>
     </Row>
   );
@@ -121,9 +121,9 @@ const Home = (props) => {
                 <Container className={localclasses.home__modal__container}>
                   <Typography
                     style={{
-                      color: "#fff",
-                      marginBottom: "15px",
-                      fontSize: "3vh",
+                      color: "#000",
+                      marginBottom: "10px",
+                      fontSize: "2vh",
                     }}
                   >
                     Enter Your Name
@@ -137,7 +137,7 @@ const Home = (props) => {
                     variant="outlined"
                     value={name}
                     onChange={(e) => {
-                    setName(e.target.value)
+                      setName(e.target.value);
                     }}
                   />
 
@@ -152,7 +152,7 @@ const Home = (props) => {
                         backgroundColor: "#ffd500",
                       }}
                       variant="contained"
-                      size="lg"
+                      size="large"
                       component={Link}
                       to={{
                         pathname: roomId,
@@ -173,9 +173,9 @@ const Home = (props) => {
                 <Container className={localclasses.home__modal__container}>
                   <Typography
                     style={{
-                      color: "#fff",
-                      marginBottom: "15px",
-                      fontSize: "3vh",
+                      color: "#000",
+                      marginBottom: "10px",
+                      fontSize: "2vh",
                     }}
                   >
                     Enter Your Name
@@ -189,15 +189,17 @@ const Home = (props) => {
                     variant="outlined"
                     value={name}
                     onChange={(e) => {
-                    setName(e.target.value)
+                      setName(e.target.value);
                     }}
+                    style={{ color: "#000" }}
                   />
 
                   <Typography
                     style={{
-                      color: "#fff",
-                      marginBottom: "15px",
-                      fontSize: "3vh",
+                      color: "#000",
+                      marginTop: "10px",
+                      marginBottom: "10px",
+                      fontSize: "2vh",
                     }}
                   >
                     Enter Room Id
@@ -210,6 +212,10 @@ const Home = (props) => {
                     InputProps={{ className: classes.input }}
                     label="Enter Room ID"
                     variant="outlined"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    placeholder="xxxx-yyyy-zzzz"
                   />
                   <br />
                   <br />
@@ -222,7 +228,7 @@ const Home = (props) => {
                         backgroundColor: "#ffd500",
                       }}
                       variant="contained"
-                      size="lg"
+                      size="large"
                       component={Link}
                       to={{
                         pathname: joinRoomId,
