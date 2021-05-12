@@ -1,9 +1,8 @@
-import React , ,{useState} from "react";
+import React , {useState} from "react";
 import AppBar from "@material-ui/core/AppBar";
 import { Toolbar, Typography, Button, Drawer,TextField } from "@material-ui/core";
 import PersonIcon from "@material-ui/icons/Person";
 import Chat from "./Chat/Chat";
-import Draggable from "react-draggable";
 import copy from "copy-to-clipboard";
 
 const Navbar = (props) => {
@@ -22,15 +21,11 @@ const Navbar = (props) => {
       >
         &nbsp;WhiteBoard<span style={{ color: "#FFD500" }}>Chat&Code</span>
       </Typography>
-      <Draggable>      
       <Button variant="contained" startIcon={<PersonIcon />} onClick={() => Copytext(props.roomId)} color = "primary" style={{ 'fontFamily': "poppins", 'marginLeft': "auto", 'fontWeight': "600", 'color': "white" }}>
         
           RoomId : {props.roomId}
         </Button>
-      </Draggable>
-      <Draggable>
-        <Chat socket={props.socket} />
-      </Draggable>
+        <Chat name = {props.name} socket = {props.socket} />
     </Toolbar>
   </AppBar>
 )

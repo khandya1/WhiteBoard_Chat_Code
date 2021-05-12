@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 const theme = createMuiTheme({
@@ -14,16 +15,16 @@ const theme = createMuiTheme({
         dark: '#0077B6',
         contrastText: '#000',
       },
-      secondary: {
+      info: {
         light: '#000A29',
         main: '#000A29',
         dark: '#002884',
         contrastText: '#fff',
       },
-      info: {
+      secondary: {
         light: '#A38800',
         main: '#FFD500',
-        dark: '#ba000d',
+        dark: '#A38800',
         contrastText: '#fff',
       },
     },

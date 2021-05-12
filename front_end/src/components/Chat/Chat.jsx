@@ -15,11 +15,13 @@ const useStyles = makeStyles({
   },
 });
 
-const Chat = (props) => {
+let allMessages = [];
+
+  const Chat = (props) => {
   const classes = useStyles();
   const [message, setMessage] = useState("");
   const [random, setRandom] = useState(true);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(allMessages);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -27,20 +29,24 @@ const Chat = (props) => {
   };
 
   const handleMessageSubmit = () => {
-    props.socket.emit("chatmessage", message);
+    let data = {
+      name: props.name,
+      message: message
+    }
+    props.socket.emit("chatmessage", data);
     let tempChat = [...messages];
-    tempChat.push(message);
+    tempChat.push(data);
+    allMessages.push(data);
     setMessages(tempChat);
   };
 
-  // useEffect(() => {
+  
 
-  // }, [messages])
-
-  props.socket.once("chatmessage", (message) => {
-    console.log("ON", message);
+  props.socket.once("chatmessage", (data) => {
+    console.log("ON", data);
     let tempChat = [...messages];
-    tempChat.push(message);
+    tempChat.push(data);
+    allMessages.push(data);
     setMessages(tempChat);
   });
 
@@ -85,6 +91,11 @@ const Chat = (props) => {
               size="small"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleMessageSubmit();
+                }
+             }}
             />
           </Grid>
           <Grid item xs={3}>
@@ -145,7 +156,7 @@ const TemporaryDrawer = (props) => {
         Chat Box
       </Button>
       <Drawer anchor={"right"} open={state} onClose={toggleDrawer(false)}>
-        {<Chat socket={props.socket} />}
+      {<Chat name = {props.name} socket = {props.socket}/>}
       </Drawer>
     </div>
   );
