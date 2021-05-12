@@ -25,7 +25,7 @@ export const ChatMessage = (props) => {
           }`,
         }}
       >
-        <Avatar>{nameGenerator(data.name.split(" "))}</Avatar>
+      <Avatar>{nameGenerator(data.name.split(" "))}</Avatar>
       </ListItemAvatar>
       <ListItemText
         style={{
