@@ -76,14 +76,14 @@ const SyntaxRoom = (props) => {
       ) : (
         <Fragment>
           <Navbar name={name} roomId={roomId} socket={socket} />
-          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="success">
               {userJoinedName} Welcome to Syntax Meets!
             </Alert>
           </Snackbar>
           <Snackbar
             open={userDisconnect}
-            autoHideDuration={6000}
+            autoHideDuration={3000}
             onClose={handleDisconnectClose}
           >
             <Alert onClose={handleDisconnectClose} severity="error">
