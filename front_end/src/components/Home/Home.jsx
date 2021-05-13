@@ -13,12 +13,13 @@ import GroupAddIcon from "@material-ui/icons/GroupAdd";
 
 function generateRoomId() {
   var tempId = "";
-  var characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   var charactersLength = characters.length;
   for (var i = 0; i < 12; i++) {
     tempId += characters.charAt(Math.floor(Math.random() * charactersLength));
-    if ((i + 1) % 4 === 0 && i !== 11) tempId += "-";
+    if ((i + 1) % 4 === 0 && i !== 11) {
+      tempId += "-";
+    }
   }
   return tempId;
 }
@@ -39,7 +40,7 @@ const Home = (props) => {
 
   const roomModal = {
     backgroundImage:
-      "linear-gradient(to left top, #000a29, #053155, #035982, #0085af, #00b4d8)",
+      "linear-gradient(to top, #d6d4ee, #e1dff2, #ebe9f6, #f5f4fb, #ffffff)",
     width: "30%",
     marginTop: "-200px",
     marginLeft: "-15%",
@@ -56,7 +57,7 @@ const Home = (props) => {
         }}
       >
         {props.start}
-        <span style={{ color: "#000", fontWeight: "800" }}>&nbsp;Code</span>
+        <span style={{ color: "#000", fontWeight: "800" }}>&nbsp;Syntax</span>
         <span style={{ color: "#ffd500", fontWeight: "800" }}>Room</span>
       </span>
     </Row>
@@ -75,12 +76,11 @@ const Home = (props) => {
                   variant="contained"
                   color="secondary"
                   style={{
-                    backgroundColor: "#ffd500",
                     padding: "10px",
-                    fontWeight: "600",
-                    color: "#300",
-                    width: "310px",
                     fontSize: "3vh",
+                    fontWeight: "600",
+                    color: "#333",
+                    width: "310px",
                   }}
                   startIcon={<MeetingRoomIcon style={{ fontSize: 30 }} />}
                   size="large"
@@ -97,12 +97,11 @@ const Home = (props) => {
                   variant="contained"
                   color="secondary"
                   style={{
-                    backgroundColor: "#ffd500",
                     padding: "10px",
+                    fontSize: "3vh",
                     fontWeight: "600",
                     color: "#333",
                     width: "310px",
-                    fontSize: "3vh",
                   }}
                   startIcon={<GroupAddIcon style={{ fontSize: 30 }} />}
                   size="large"
@@ -116,7 +115,7 @@ const Home = (props) => {
                 dialogStyles={roomModal}
                 hideOnOverlayClicked
                 ref={skyLightCreateModal}
-                title={<ModalTitle start="Create a new" />}
+                title={<ModalTitle start="Create a" />}
               >
                 <Container className={localclasses.home__modal__container}>
                   <Typography
@@ -217,6 +216,7 @@ const Home = (props) => {
                     }}
                     placeholder="xxxx-yyyy-zzzz"
                   />
+
                   <br />
                   <br />
 
@@ -248,7 +248,9 @@ const Home = (props) => {
     </div>
   );
 };
+
 Home.propTypes = {
   classes: PropTypes.object.isRequired,
 };
+
 export default withStyles(styles)(Home);
