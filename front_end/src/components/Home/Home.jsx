@@ -79,11 +79,11 @@ const Home = (props) => {
                     padding: "10px",
                     fontWeight: "600",
                     color: "#300",
+                    width: "310px",
                     fontSize: "3vh",
                   }}
                   startIcon={<MeetingRoomIcon style={{ fontSize: 30 }} />}
                   size="large"
-                  fullWidth
                   onClick={() => skyLightCreateModal.current.show()}
                 >
                   Create a Room
@@ -101,11 +101,11 @@ const Home = (props) => {
                     padding: "10px",
                     fontWeight: "600",
                     color: "#333",
+                    width: "310px",
                     fontSize: "3vh",
                   }}
                   startIcon={<GroupAddIcon style={{ fontSize: 30 }} />}
                   size="large"
-                  fullWidth
                   onClick={() => skyLightJoinModal.current.show()}
                 >
                   Join a room
