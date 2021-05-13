@@ -115,7 +115,6 @@ const SyntaxEditor = (props) => {
     var options = {
       method: "POST",
       url: "https://judge0-ce.p.rapidapi.com/submissions",
-      params: { base64_encoded: "true", fields: "*" },
       headers: {
         "content-type": "application/json",
         "x-rapidapi-key": "19d0efcb30msha1114de32fcfce0p13d849jsnab6f1292bb33",
@@ -145,7 +144,6 @@ const SyntaxEditor = (props) => {
     var options = {
       method: "GET",
       url: "https://judge0-ce.p.rapidapi.com/submissions/" + codeToken,
-      params: { base64_encoded: "true", fields: "*" },
       headers: {
         "x-rapidapi-key": "19d0efcb30msha1114de32fcfce0p13d849jsnab6f1292bb33",
         "x-rapidapi-host": "judge0-ce.p.rapidapi.com",
