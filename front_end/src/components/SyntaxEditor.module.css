@@ -8,9 +8,7 @@
 .Menu__options {
   font-family: "poppins";
   font-size: 13px;
-  color: white;
 }
-
 
 .loader {
   color: #ffd500;
@@ -18,11 +16,12 @@
   font-family: Consolas, Menlo, Monaco, monospace;
   font-weight: bold;
   font-size: 30vh;
-  opacity: 1;}
+  opacity: 1;
+}
 
 .loader span {
-    display: inline-block;
-    animation: pulse 0.4s alternate infinite ease-in-out;
+  display: inline-block;
+  animation: pulse 0.4s alternate infinite ease-in-out;
 }
 .loader span:nth-child(odd) {
   animation-delay: 0.4s;
