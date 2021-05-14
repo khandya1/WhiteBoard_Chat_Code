@@ -53,7 +53,7 @@ const SyntaxRoom = (props) => {
       room: roomId,
       name: name,
     };
-    socket.emit("joinroom", data);
+    socket.emit("joinroom", data); // eslint-disable-next-line
   }, []);
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {

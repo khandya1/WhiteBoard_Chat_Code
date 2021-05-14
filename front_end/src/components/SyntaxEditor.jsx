@@ -74,7 +74,7 @@ const ICE = (props) => {
 
 const SyntaxEditor = (props) => {
   const [value, setValue] = useState(defaultValue);
-  const [currLang, setCurrLang] = useState("C++");
+  const [currLang, setCurrLang] = useState("C++"); // eslint-disable-next-line
   const [mode, setMode] = useState(langMode["C++"]);
   const [theme, setTheme] = useState("monokai");
   const [fontSize, setFontSize] = useState(16);
@@ -123,7 +123,7 @@ const SyntaxEditor = (props) => {
       data: {
         language_id: langId[currLang],
         source_code: value,
-        stdin: "codeInput",
+        stdin: codeInput,
       },
     };
     console.log(options);
@@ -141,7 +141,7 @@ const SyntaxEditor = (props) => {
     const delay = (ms) => new Promise((res) => setTimeout(res, ms));
     await delay(7000);
 
-    var options = {
+    var options1 = {
       method: "GET",
       url: "https://judge0-ce.p.rapidapi.com/submissions/" + codeToken,
       headers: {
@@ -151,7 +151,7 @@ const SyntaxEditor = (props) => {
     };
 
     await axios
-      .request(options)
+      .request(options1)
       .then(function (response) {
         if (response.data.stderr !== null) {
           setIsCompiling(false);

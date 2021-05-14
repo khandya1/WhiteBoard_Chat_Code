@@ -41,7 +41,7 @@ const Chat = (props) => {
   useEffect(() => {
     props.socket.on("chatmessage", (data) => {
       setMessages((messages) => [...messages, data]);
-    });
+    }); // eslint-disable-next-line
   }, []);
 
   const scrollToBottom = () => {
