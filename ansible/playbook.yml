@@ -31,9 +31,11 @@
     - name: Create front-end container
 
       docker_container:
-        name:wcc-frontend
+        name: wcc-frontend
 
         image: rajbhatti/wcc-frontend
+
+        interactive: true
 
         ports:
           - "3000:3000"

@@ -78,7 +78,7 @@ const SyntaxRoom = (props) => {
           <Navbar name={name} roomId={roomId} socket={socket} />
           <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="success">
-              {userJoinedName} Welcome to Syntax Meets!
+              {userJoinedName} Welcome!
             </Alert>
           </Snackbar>
           <Snackbar
